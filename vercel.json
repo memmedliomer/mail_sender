@@ -22,7 +22,7 @@
   ],
   "rewrites": [
     {
-      "source": "/api/send-email",
+      "source": "/api/send_emails",
       "destination": "/api/send_emails.py"
     }
   ]
