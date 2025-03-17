@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Send Emails</title>
+</head>
+<body>
+    <input type="file" id="fileInput" accept=".xlsx">
+    <button onclick="uploadFile()">Upload and Send</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+    function uploadFile() {
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+        if (!file) {
+            alert("Please select an Excel file.");
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = e.target.result;
+            const workbook = XLSX.read(data, { type: 'binary' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const emailList = XLSX.utils.sheet_to_json(sheet, { header: 1 }).map(row => row[0]);
+            sendEmails(emailList);
+        };
+        reader.readAsBinaryString(file);
+    }
+
+    function sendEmails(emailList) {
+        fetch('/api/send_emails', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ emails: emailList }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while sending emails.');
+        });
+    }
+    </script>
+</body>
+</html>
