@@ -14,19 +14,17 @@ def main(request):
             subject = "Test Email"
             text = "Test mesaji"
 
-            # Create the email message
-            msg = MIMEMultipart()
-            msg['From'] = sender
-            msg['To'] = ', '.join(emails)
-            msg['Subject'] = subject
-            msg.attach(MIMEText(text, 'plain'))
-
-            # Connect to Gmail's SMTP server
             smtp_server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
             smtp_server.login(sender, password)
 
-            # Send the email
-            smtp_server.sendmail(sender, emails, msg.as_string())
+            for recipient in emails:
+                msg = MIMEMultipart()
+                msg['From'] = sender
+                msg['To'] = recipient
+                msg['Subject'] = subject
+                msg.attach(MIMEText(text, 'plain'))
+                smtp_server.sendmail(sender, recipient, msg.as_string())
+
             smtp_server.quit()
 
             return {
