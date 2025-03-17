@@ -20,4 +20,10 @@
         "dest": "index.html"
       }
     ]
+  "rewrites": [
+    {
+      "source": "/api/send-email",
+      "destination": "/send_email.py"
+    }
+  ]
   }
